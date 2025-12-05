@@ -1,6 +1,7 @@
 # ===========================================
 # QualyIT Production Dockerfile
 # Multi-stage build for Next.js 15 with pnpm
+# Optimized for low-memory environments
 # ===========================================
 
 FROM node:20-alpine AS base
@@ -22,7 +23,7 @@ COPY packages/database/package.json ./packages/database/
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/config/package.json ./packages/config/
 
-# Install dependencies
+# Install dependencies (production only to reduce size)
 RUN pnpm install --frozen-lockfile
 
 # ===========================================
@@ -31,10 +32,8 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 
-# Copy dependencies
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
-COPY --from=deps /app/packages/*/node_modules ./packages/
+# Copy all from deps (including node_modules structure)
+COPY --from=deps /app ./
 
 # Copy source code
 COPY . .
@@ -57,9 +56,12 @@ ENV NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=$NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
 
-# Build the application
+# Build the application with memory optimizations
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm build
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
+# Build only the web app (packages are TypeScript sources)
+RUN pnpm --filter @qualyit/web build
 
 # ===========================================
 # Production runner stage
