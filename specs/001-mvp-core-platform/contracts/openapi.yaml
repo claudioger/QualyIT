@@ -1,0 +1,1242 @@
+openapi: 3.1.0
+info:
+  title: QualyIT API
+  description: API for QualyIT Quality Management Platform (MVP)
+  version: 1.0.0
+  contact:
+    name: QualyIT Support
+
+servers:
+  - url: https://{tenant}.qualyit.app/api
+    variables:
+      tenant:
+        default: demo
+        description: Tenant subdomain
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Areas
+    description: Organizational area management
+  - name: Users
+    description: User and team management
+  - name: Tasks
+    description: Task management and completion
+  - name: Dashboard
+    description: Dashboard and analytics
+  - name: Notifications
+    description: Notification management
+  - name: Uploads
+    description: File upload handling
+
+paths:
+  # ============ AREAS ============
+  /areas:
+    get:
+      tags: [Areas]
+      summary: List all areas
+      description: Returns hierarchical list of areas for the tenant
+      parameters:
+        - name: flat
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Return flat list instead of tree
+      responses:
+        '200':
+          description: List of areas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+
+    post:
+      tags: [Areas]
+      summary: Create area
+      description: Create a new organizational area
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAreaRequest'
+      responses:
+        '201':
+          description: Area created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Area'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /areas/{areaId}:
+    get:
+      tags: [Areas]
+      summary: Get area details
+      parameters:
+        - $ref: '#/components/parameters/AreaId'
+      responses:
+        '200':
+          description: Area details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaWithStats'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Areas]
+      summary: Update area
+      parameters:
+        - $ref: '#/components/parameters/AreaId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAreaRequest'
+      responses:
+        '200':
+          description: Area updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Area'
+
+    delete:
+      tags: [Areas]
+      summary: Delete area
+      description: Soft delete an area (sets is_active=false)
+      parameters:
+        - $ref: '#/components/parameters/AreaId'
+      responses:
+        '204':
+          description: Area deleted
+
+  /areas/{areaId}/stats:
+    get:
+      tags: [Areas, Dashboard]
+      summary: Get area statistics
+      description: Returns compliance score, task counts, alerts for an area
+      parameters:
+        - $ref: '#/components/parameters/AreaId'
+      responses:
+        '200':
+          description: Area statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaStats'
+
+  # ============ USERS ============
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      description: Returns users in the tenant
+      parameters:
+        - name: areaId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by area
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/UserRole'
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user
+      responses:
+        '200':
+          description: Current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithAreas'
+
+    patch:
+      tags: [Users]
+      summary: Update current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/invite:
+    post:
+      tags: [Users]
+      summary: Invite user
+      description: Send invitation email to new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteUserRequest'
+      responses:
+        '201':
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitationId:
+                    type: string
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get user
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithAreas'
+
+    patch:
+      tags: [Users]
+      summary: Update user
+      description: Admin only - update user role or areas
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateUserRequest'
+      responses:
+        '200':
+          description: User updated
+
+    delete:
+      tags: [Users]
+      summary: Deactivate user
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: User deactivated
+
+  # ============ TASKS ============
+  /tasks:
+    get:
+      tags: [Tasks]
+      summary: List tasks
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/TaskStatus'
+        - name: areaId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: assignedToId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: dueDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter by due date
+        - name: today
+          in: query
+          schema:
+            type: boolean
+          description: Only tasks due today
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskWithDetails'
+
+    post:
+      tags: [Tasks]
+      summary: Create task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/my-today:
+    get:
+      tags: [Tasks]
+      summary: Get my tasks for today
+      description: Returns current user's tasks due today, sorted by time
+      responses:
+        '200':
+          description: Today's tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TaskWithDetails'
+                  completedCount:
+                    type: integer
+                  pendingCount:
+                    type: integer
+
+  /tasks/{taskId}:
+    get:
+      tags: [Tasks]
+      summary: Get task details
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task details with checklist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskWithChecklist'
+
+    patch:
+      tags: [Tasks]
+      summary: Update task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Task updated
+
+    delete:
+      tags: [Tasks]
+      summary: Cancel task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Task cancelled
+
+  /tasks/{taskId}/complete:
+    post:
+      tags: [Tasks]
+      summary: Complete task
+      description: Mark task as complete (OK or problem)
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteTaskRequest'
+      responses:
+        '200':
+          description: Task completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskCompletion'
+
+  /tasks/{taskId}/checklist/{itemId}/complete:
+    post:
+      tags: [Tasks]
+      summary: Complete checklist item
+      description: Mark individual checklist item as OK or problem
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteChecklistItemRequest'
+      responses:
+        '200':
+          description: Item completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistItem'
+
+  /tasks/{taskId}/assign:
+    post:
+      tags: [Tasks]
+      summary: Assign task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Task assigned
+
+  # ============ DASHBOARD ============
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Get manager dashboard
+      description: Returns overview of all areas (manager/admin only)
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagerDashboard'
+
+  /dashboard/trends:
+    get:
+      tags: [Dashboard]
+      summary: Get compliance trends
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrendDataPoint'
+
+  # ============ NOTIFICATIONS ============
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications
+      parameters:
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  /notifications/read:
+    post:
+      tags: [Notifications]
+      summary: Mark notifications as read
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                all:
+                  type: boolean
+      responses:
+        '200':
+          description: Notifications marked as read
+
+  /notifications/preferences:
+    get:
+      tags: [Notifications]
+      summary: Get notification preferences
+      responses:
+        '200':
+          description: Current preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+
+    put:
+      tags: [Notifications]
+      summary: Update notification preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreferences'
+      responses:
+        '200':
+          description: Preferences updated
+
+  /notifications/register-device:
+    post:
+      tags: [Notifications]
+      summary: Register device for push
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, platform]
+              properties:
+                token:
+                  type: string
+                  description: FCM token
+                platform:
+                  type: string
+                  enum: [web, ios, android]
+      responses:
+        '200':
+          description: Device registered
+
+  # ============ UPLOADS ============
+  /uploads/presign:
+    post:
+      tags: [Uploads]
+      summary: Get presigned upload URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, contentType]
+              properties:
+                filename:
+                  type: string
+                contentType:
+                  type: string
+                context:
+                  type: string
+                  enum: [task_completion, problem]
+                contextId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Presigned URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadUrl:
+                    type: string
+                    format: uri
+                  key:
+                    type: string
+                  expiresAt:
+                    type: string
+                    format: date-time
+
+  # ============ SYNC ============
+  /sync/pending:
+    get:
+      tags: [Tasks]
+      summary: Get pending sync items
+      description: Returns items that need to be synced (for offline recovery)
+      responses:
+        '200':
+          description: Pending items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completions:
+                    type: array
+                    items:
+                      type: string
+                  uploads:
+                    type: array
+                    items:
+                      type: string
+
+  /sync/complete:
+    post:
+      tags: [Tasks]
+      summary: Sync offline completions
+      description: Batch sync task completions from offline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                completions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OfflineCompletion'
+      responses:
+        '200':
+          description: Sync results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  synced:
+                    type: integer
+                  failed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        offlineId:
+                          type: string
+                        error:
+                          type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk JWT token
+
+  parameters:
+    AreaId:
+      name: areaId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    TaskId:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # ---- Enums ----
+    UserRole:
+      type: string
+      enum: [admin, manager, supervisor, employee]
+
+    TaskType:
+      type: string
+      enum: [scheduled, corrective, preventive]
+
+    TaskPriority:
+      type: string
+      enum: [critical, high, medium, low]
+
+    TaskStatus:
+      type: string
+      enum: [pending, in_progress, completed, cancelled]
+
+    ChecklistStatus:
+      type: string
+      enum: [pending, ok, problem]
+
+    ProblemReason:
+      type: string
+      enum: [no_time, no_supplies, equipment_broken, other]
+
+    # ---- Core Entities ----
+    Area:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        parentId:
+          type: string
+          format: uuid
+        responsibleId:
+          type: string
+          format: uuid
+        responsibleName:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Area'
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    AreaWithStats:
+      allOf:
+        - $ref: '#/components/schemas/Area'
+        - type: object
+          properties:
+            stats:
+              $ref: '#/components/schemas/AreaStats'
+
+    AreaStats:
+      type: object
+      properties:
+        complianceScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        tasksCompleted:
+          type: integer
+        tasksPending:
+          type: integer
+        tasksOverdue:
+          type: integer
+        openProblems:
+          type: integer
+        lastUpdated:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatarUrl:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        isActive:
+          type: boolean
+
+    UserWithAreas:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            areas:
+              type: array
+              items:
+                $ref: '#/components/schemas/Area'
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/TaskType'
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        areaId:
+          type: string
+          format: uuid
+        assignedToId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date-time
+        scheduledTime:
+          type: string
+          format: time
+        hasChecklist:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    TaskWithDetails:
+      allOf:
+        - $ref: '#/components/schemas/Task'
+        - type: object
+          properties:
+            areaName:
+              type: string
+            assignedToName:
+              type: string
+            checklistProgress:
+              type: object
+              properties:
+                completed:
+                  type: integer
+                total:
+                  type: integer
+
+    TaskWithChecklist:
+      allOf:
+        - $ref: '#/components/schemas/TaskWithDetails'
+        - type: object
+          properties:
+            checklistItems:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChecklistItem'
+
+    ChecklistItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        sortOrder:
+          type: integer
+        status:
+          $ref: '#/components/schemas/ChecklistStatus'
+        completedAt:
+          type: string
+          format: date-time
+        completedByName:
+          type: string
+        problemReason:
+          type: string
+
+    TaskCompletion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        taskId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ok, problem]
+        notes:
+          type: string
+        completedAt:
+          type: string
+          format: date-time
+        files:
+          type: array
+          items:
+            type: string
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [task_assigned, task_reminder, task_overdue, problem_reported]
+        title:
+          type: string
+        body:
+          type: string
+        data:
+          type: object
+        readAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    NotificationPreferences:
+      type: object
+      properties:
+        taskAssigned:
+          type: boolean
+        taskReminder:
+          type: boolean
+        taskOverdue:
+          type: boolean
+        problemReported:
+          type: boolean
+        quietHoursStart:
+          type: string
+          format: time
+        quietHoursEnd:
+          type: string
+          format: time
+        channels:
+          type: object
+          properties:
+            push:
+              type: boolean
+            email:
+              type: boolean
+
+    ManagerDashboard:
+      type: object
+      properties:
+        overallScore:
+          type: number
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaWithStats'
+        criticalAlerts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              areaName:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+        upcomingExpirations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              dueDate:
+                type: string
+                format: date
+
+    TrendDataPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        score:
+          type: number
+        tasksCompleted:
+          type: integer
+        problemsReported:
+          type: integer
+
+    # ---- Request Bodies ----
+    CreateAreaRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        code:
+          type: string
+          maxLength: 50
+        parentId:
+          type: string
+          format: uuid
+        responsibleId:
+          type: string
+          format: uuid
+
+    UpdateAreaRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        parentId:
+          type: string
+          format: uuid
+        responsibleId:
+          type: string
+          format: uuid
+        sortOrder:
+          type: integer
+
+    InviteUserRequest:
+      type: object
+      required: [email, role, areaIds]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        areaIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        avatarUrl:
+          type: string
+        notificationPreferences:
+          $ref: '#/components/schemas/NotificationPreferences'
+
+    AdminUpdateUserRequest:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/UserRole'
+        areaIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        isActive:
+          type: boolean
+
+    CreateTaskRequest:
+      type: object
+      required: [title, areaId, type]
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/TaskType'
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        areaId:
+          type: string
+          format: uuid
+        assignedToId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date-time
+        scheduledTime:
+          type: string
+          format: time
+        recurrenceRule:
+          type: object
+          properties:
+            frequency:
+              type: string
+              enum: [daily, weekly, monthly]
+            interval:
+              type: integer
+            daysOfWeek:
+              type: array
+              items:
+                type: integer
+            dayOfMonth:
+              type: integer
+        checklistItems:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        assignedToId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date-time
+
+    CompleteTaskRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, problem]
+        notes:
+          type: string
+        problemReason:
+          $ref: '#/components/schemas/ProblemReason'
+        fileKeys:
+          type: array
+          items:
+            type: string
+        offlineId:
+          type: string
+          description: Client-side ID for deduplication
+
+    CompleteChecklistItemRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, problem]
+        problemReason:
+          $ref: '#/components/schemas/ProblemReason'
+        fileKeys:
+          type: array
+          items:
+            type: string
+        offlineId:
+          type: string
+
+    OfflineCompletion:
+      type: object
+      required: [offlineId, taskId, status, completedAt]
+      properties:
+        offlineId:
+          type: string
+        taskId:
+          type: string
+          format: uuid
+        checklistItemId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ok, problem]
+        notes:
+          type: string
+        problemReason:
+          $ref: '#/components/schemas/ProblemReason'
+        fileKeys:
+          type: array
+          items:
+            type: string
+        completedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object

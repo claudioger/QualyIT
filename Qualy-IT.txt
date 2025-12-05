@@ -1,0 +1,1394 @@
+Sistema de Gestión de Calidad y Cumplimiento Empresarial
+Claudio, este es un proyecto muy interesante y bastante completo. Voy a estructurar los requerimientos de forma profesional, añadiendo clarificaciones, buenas prácticas y consideraciones técnicas que harán del sistema una solución robusta y de vanguardia.
+
+📋 Análisis y Clarificación de Requerimientos
+1. Módulo de Estructura Organizacional
+Lo que pediste:
+
+Ingresar áreas y subáreas de la empresa
+Cargar responsables de cada área
+
+Clarificaciones y adiciones:
+FuncionalidadDetalleBuena PrácticaJerarquía multinivelPermitir N niveles de profundidad (Empresa → División → Área → Subárea → Sector)Árbol dinámico sin límite hardcodeadoHistorial de cambiosQuién era responsable en cada períodoAuditoría completa para certificacionesOrganigramas visualesRepresentación gráfica interactivaExportable a PDF para documentaciónResponsables múltiplesTitular + Suplente + Responsable temporalContinuidad operativaMetadata de áreasUbicación física, centro de costos, código SAP/ERPIntegración con sistemas existentes
+
+2. Módulo de Evaluaciones y Puntos de Calidad
+Lo que pediste:
+
+Tareas y subtareas de autocheck
+Sistema de puntos según nivel de incumplimiento
+Vinculación con certificación de calidad
+Períodos de evaluación con reportes
+
+Clarificaciones y adiciones:
+ESTRUCTURA DE EVALUACIÓN PROPUESTA:
+
+┌─────────────────────────────────────────────────────────────┐
+│  NORMA/ESTÁNDAR (ISO 9001, IRAM, Hotelería, Personalizada)  │
+├─────────────────────────────────────────────────────────────┤
+│  └── CAPÍTULO/SECCIÓN                                       │
+│       └── REQUISITO                                         │
+│            └── CRITERIO DE EVALUACIÓN                       │
+│                 └── EVIDENCIA REQUERIDA                     │
+│                      └── CHECKLIST DE VERIFICACIÓN          │
+└─────────────────────────────────────────────────────────────┘
+Sistema de Puntuación Configurable:
+Nivel de CumplimientoCódigo ColorPeso SugeridoAcción RequeridaConforme🟢 Verde100%NingunaObservación menor🟡 Amarillo85%Mejora sugeridaNo conformidad menor🟠 Naranja60%Acción correctiva 30 díasNo conformidad mayor🔴 Rojo0%Acción correctiva inmediataNo aplica⚪ GrisExcluidoJustificación documentada
+Adiciones críticas:
+
+Ponderación por criticidad: No todos los requisitos valen lo mismo
+Escalas configurables: Cada empresa define sus propios niveles
+Benchmark histórico: Comparar evaluación actual vs anteriores
+Simulador de certificación: "¿Pasaríamos la auditoría hoy?"
+
+
+3. Módulo de Gestión de Tareas
+Lo que pediste:
+
+Tareas programadas, correctivas y preventivas
+Asignación a personas con seguimiento
+Adjuntos multimedia
+Notificaciones y alertas
+Evaluación de resolución
+
+Clarificaciones y modelo propuesto:
+CICLO DE VIDA DE TAREA:
+
+[Creación] → [Asignación] → [En Progreso] → [Verificación] → [Cierre]
+     ↓            ↓              ↓               ↓              ↓
+  Plantilla    Notifica      Evidencias      Validación    Puntuación
+  o manual     asignado      adjuntas        del jefe      performance
+Tipos de Tareas Expandidos:
+TipoSubtipoEjemploRecurrenciaProgramadaRutinariaLimpieza diaria cocinaCron configurableProgramadaPeriódicaInventario mensualMensual/TrimestralCorrectivaPost-incidenteReparar equipo dañadoUna vezCorrectivaPost-auditoríaCerrar no conformidadCon deadlinePreventivaMantenimientoServicio aire acondicionadoSegún fabricantePreventivaCapacitaciónEntrenamiento manipulación alimentosAnualVencimientoRegulatorioMatafuegos, habilitacionesFecha fijaVencimientoContractualSeguros, alquileresFecha fijaVencimientoImpositivoIIBB, IVA, GananciasCalendario fiscalEspecialProyectoImplementar nuevo procesoGantt con hitos
+Campos de Tarea Enriquecidos:
+yamlTarea:
+  - Título y descripción
+  - Tipo y subtipo
+  - Prioridad (Crítica/Alta/Media/Baja)
+  - Área responsable
+  - Asignado a (puede ser múltiple)
+  - Supervisor/Verificador
+  - Fecha inicio / Fecha límite
+  - Tiempo estimado vs real
+  - Recurrencia (cron expression)
+  - Checklist de pasos
+  - Adjuntos permitidos (tipos y tamaño máx)
+  - Vinculación a requisito de calidad
+  - Costo estimado / Costo real
+  - Etiquetas/Tags personalizables
+  - Dependencias (bloquea/bloqueada por)
+```
+
+---
+
+### 4. Sistema de Alertas y Notificaciones
+
+**Propuesta ampliada:**
+
+| Evento | Canal | Destinatario | Anticipación |
+|--------|-------|--------------|--------------|
+| Tarea asignada | Push + Email | Asignado | Inmediato |
+| Tarea próxima a vencer | Push + Email + SMS* | Asignado + Jefe | 7, 3, 1 día |
+| Tarea vencida | Push + Email + SMS* | Asignado + Jefe + Gerencia | Diario |
+| Vencimiento regulatorio | Email + Dashboard | Responsable área | 60, 30, 15, 7 días |
+| Evaluación programada | Email | Todos los involucrados | 15 días antes |
+| Indicador en rojo | Push + Email | Gerencia | Tiempo real |
+| Resumen semanal | Email | Configurable por rol | Lunes 8am |
+
+*SMS opcional para críticos
+
+**Configuración personalizable por usuario:**
+- Qué notificaciones recibir
+- Por qué canal
+- Horarios de no molestar
+- Agrupación de notificaciones (digest)
+
+---
+
+### 5. Dashboard Gerencial
+
+**Propuesta de visualizaciones:**
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  DASHBOARD EJECUTIVO                                    [Filtros ▼]│
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌─────────┐│
+│  │ Score Global │  │ Tareas      │  │ Vencimientos │  │ Alertas ││
+│  │    87%       │  │ Pendientes  │  │ Próximos     │  │ Activas ││
+│  │   ▲ +3%      │  │    142      │  │     23       │  │   5 🔴  ││
+│  └──────────────┘  └──────────────┘  └──────────────┘  └─────────┘│
+│                                                                    │
+│  ┌─────────────────────────────────┐ ┌────────────────────────────┐│
+│  │ CUMPLIMIENTO POR ÁREA          │ │ TENDENCIA 12 MESES         ││
+│  │ ████████████████████ Cocina 95%│ │        ╱‾‾‾╲               ││
+│  │ ████████████████░░░░ Pisos  80%│ │   ╱‾‾‾╱    ╲___            ││
+│  │ ████████████░░░░░░░░ Mant.  60%│ │ ─╱                         ││
+│  │ ████████░░░░░░░░░░░░ Admin  40%│ │                            ││
+│  └─────────────────────────────────┘ └────────────────────────────┘│
+│                                                                    │
+│  ┌─────────────────────────────────────────────────────────────────┤
+│  │ MAPA DE CALOR: REQUISITOS CRÍTICOS                             │
+│  │ [Visualización interactiva de requisitos por área y estado]    │
+│  └─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────────┘
+```
+
+**KPIs sugeridos:**
+- Índice de cumplimiento global y por área
+- Tiempo promedio de resolución de tareas
+- Tasa de recurrencia de no conformidades
+- Costo de no calidad
+- Performance por empleado/área
+- Tendencias y proyecciones
+- Comparativo entre períodos
+
+---
+
+### 6. Gestión Documental para Certificaciones
+
+**Propuesta de estructura:**
+```
+CARPETA DIGITAL DE CERTIFICACIÓN
+│
+├── 📁 Manual de Calidad
+│   ├── Política de calidad
+│   ├── Objetivos de calidad
+│   └── Mapa de procesos
+│
+├── 📁 Procedimientos
+│   ├── Por área
+│   └── Transversales
+│
+├── 📁 Registros
+│   ├── Evaluaciones completadas
+│   ├── Acciones correctivas cerradas
+│   ├── Capacitaciones realizadas
+│   └── Auditorías internas
+│
+├── 📁 Evidencias
+│   ├── Fotos
+│   ├── Videos
+│   └── Documentos firmados
+│
+└── 📁 Reportes
+    ├── Indicadores mensuales
+    ├── Revisiones por la dirección
+    └── Informes de auditoría
+```
+
+**Funcionalidades documentales:**
+- Versionado automático de documentos
+- Firmas digitales (integración con firma electrónica argentina)
+- Trazabilidad completa (quién, cuándo, qué cambió)
+- Generación automática de carpeta para auditor externo
+- Export a formatos requeridos (PDF, Excel, Word)
+- Retención documental configurable por tipo
+
+---
+
+### 7. Plantillas y Configuración Libre
+
+**Plantillas precargadas sugeridas:**
+
+| Industria/Norma | Plantillas Incluidas |
+|-----------------|---------------------|
+| **ISO 9001:2015** | Todos los requisitos + checklists |
+| **Hotelería** | IRAM-SECTUR, estrellas, calidad turística |
+| **Gastronomía** | BPM, HACCP, bromatología |
+| **Salud** | Habilitaciones, bioseguridad |
+| **General** | Seguridad e higiene, medio ambiente |
+| **Vencimientos** | Matafuegos, seguros, VTV, impuestos |
+
+**Editor de plantillas:**
+- Drag & drop para crear formularios
+- Campos condicionales (si X entonces mostrar Y)
+- Cálculos automáticos
+- Validaciones personalizadas
+- Import/Export de plantillas entre organizaciones
+
+---
+
+### 8. Evaluación de Performance de Empleados
+
+**Modelo propuesto:**
+```
+SCORE DE EMPLEADO = Σ(Puntaje tarea × Peso) / Σ Pesos
+
+Factores:
+├── Cumplimiento de tareas asignadas (40%)
+│   ├── % completadas en tiempo
+│   ├── Calidad de resolución
+│   └── Documentación aportada
+│
+├── Participación en evaluaciones (30%)
+│   ├── Puntaje obtenido en autoevaluaciones
+│   └── Mejoras propuestas
+│
+├── Capacitación (20%)
+│   ├── Cursos completados
+│   └── Certificaciones vigentes
+│
+└── Indicadores especiales (10%)
+    ├── Iniciativas de mejora
+    └── Reconocimientos
+```
+
+---
+
+## 🛠️ Stack Tecnológico Recomendado
+
+### Frontend (Mobile First + PWA)
+```
+┌─────────────────────────────────────────────────────────────┐
+│  FRONTEND STACK                                             │
+├─────────────────────────────────────────────────────────────┤
+│  Framework:     Next.js 14+ (App Router)                    │
+│  UI Library:    Shadcn/UI + Radix Primitives               │
+│  Styling:       Tailwind CSS + CSS Variables para temas     │
+│  Estado:        Zustand + TanStack Query                    │
+│  Formularios:   React Hook Form + Zod                       │
+│  Gráficos:      Recharts + Tremor                          │
+│  Tablas:        TanStack Table                             │
+│  Drag & Drop:   dnd-kit                                    │
+│  Animaciones:   Framer Motion                              │
+│  PWA:           next-pwa                                   │
+│  Offline:       Workbox                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Backend
+```
+┌─────────────────────────────────────────────────────────────┐
+│  BACKEND STACK                                              │
+├─────────────────────────────────────────────────────────────┤
+│  Framework:     FastAPI (Python 3.12+)                      │
+│  ORM:           SQLAlchemy 2.0 + Alembic                   │
+│  Base de datos: PostgreSQL 16                              │
+│  Cache:         Redis                                       │
+│  Cola tareas:   Celery + Redis                             │
+│  Almacenamiento: MinIO / S3 compatible                     │
+│  Auth:          OAuth2 + JWT + RBAC                        │
+│  API Docs:      OpenAPI automático                         │
+│  Websockets:    Para notificaciones real-time              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Infraestructura
+```
+┌─────────────────────────────────────────────────────────────┐
+│  INFRAESTRUCTURA                                            │
+├─────────────────────────────────────────────────────────────┤
+│  Containers:    Docker + Docker Compose                     │
+│  Orquestación:  Kubernetes (opcional para escalar)          │
+│  CI/CD:         GitHub Actions                             │
+│  Monitoreo:     Prometheus + Grafana                       │
+│  Logs:          Loki o ELK Stack                           │
+│  CDN:           Cloudflare                                 │
+│  SSL:           Let's Encrypt automático                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Integraciones Sugeridas
+
+| Servicio | Uso |
+|----------|-----|
+| **AFIP** | Calendario fiscal automático |
+| **Notificaciones** | Firebase Cloud Messaging, SendGrid, Twilio |
+| **Firma Digital** | Integración con prestadores argentinos |
+| **Calendario** | Google Calendar, Outlook |
+| **Storage** | AWS S3, Google Cloud Storage, MinIO |
+| **SSO** | Google Workspace, Microsoft 365, SAML |
+
+---
+
+## 🎨 Principios UX/UI
+
+### Design System Propuesto
+```
+PRINCIPIOS DE DISEÑO:
+
+1. MOBILE FIRST
+   └── Diseñar primero para móvil, escalar a desktop
+   
+2. ACCESIBILIDAD (WCAG 2.1 AA)
+   └── Contraste, navegación por teclado, screen readers
+   
+3. MICROINTERACCIONES
+   └── Feedback visual inmediato en cada acción
+   
+4. CARGA PROGRESIVA
+   └── Skeleton loaders, optimistic updates
+   
+5. NAVEGACIÓN PREDICTIVA
+   └── Prefetch de rutas probables
+   
+6. DARK MODE
+   └── Toggle automático o manual
+   
+7. PERSONALIZACIÓN
+   └── Layout configurable por usuario
+Paleta de Colores (ejemplo profesional)
+css:root {
+  /* Primarios */
+  --primary-50:  #eff6ff;
+  --primary-500: #3b82f6;
+  --primary-900: #1e3a8a;
+  
+  /* Estados */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger:  #ef4444;
+  --info:    #06b6d4;
+  
+  /* Neutrales */
+  --gray-50:  #f9fafb;
+  --gray-900: #111827;
+}
+```
+
+### Tipografía
+```
+Headings:  Inter (Variable Font)
+Body:      Inter
+Monospace: JetBrains Mono (para códigos/datos)
+
+📱 Funcionalidades Mobile Específicas
+FuncionalidadDescripciónModo offlineCompletar checklists sin conexión, sincroniza al reconectarCámara integradaTomar fotos como evidencia directamenteEscaneo QR/BarcodeIdentificar equipos, ubicaciones, productosGeolocalizaciónRegistro de ubicación en tareas de campoFirma en pantallaFirmar conformidades con el dedoPush notificationsAlertas críticas incluso con app cerradaBiometríaLogin con huella/face IDModo kioskoPara tablets fijas en áreas comunes
+
+🔐 Seguridad y Compliance
+AspectoImplementaciónAutenticaciónMFA opcional, políticas de contraseña configurablesAutorizaciónRBAC granular (rol → permisos → acciones)AuditoríaLog inmutable de todas las accionesEncriptaciónEn tránsito (TLS 1.3) y en reposo (AES-256)BackupAutomático diario, retención configurableGDPR/Ley 25.326Derecho a olvido, exportación de datosPenetration testingRecomendado antes de producción
+
+📊 Módulos Adicionales Sugeridos
+1. Módulo de Auditorías Internas
+
+Planificación de auditorías
+Asignación de auditores
+Checklist durante auditoría
+Hallazgos y evidencias
+Informe automático
+
+2. Módulo de Mejora Continua
+
+Registro de oportunidades de mejora
+Análisis causa-raíz (Ishikawa, 5 Por qués)
+Seguimiento de acciones
+Medición de efectividad
+
+3. Módulo de Capacitación
+
+Catálogo de cursos
+Asignación por puesto/área
+Seguimiento de vencimientos
+Evaluaciones post-capacitación
+Certificados digitales
+
+4. Módulo de Incidentes
+
+Reporte rápido de incidentes
+Clasificación y priorización
+Workflow de resolución
+Análisis estadístico
+
+5. Módulo de Proveedores
+
+Evaluación de proveedores
+Seguimiento de documentación
+Ranking y comparativos
+
+
+📅 Estimación de Fases
+FaseMódulosDuración EstimadaMVPEstructura org + Usuarios + Tareas básicas + Notificaciones2-3 mesesV1.0Evaluaciones + Puntuación + Dashboard básico + Mobile+2 mesesV1.5Plantillas + Vencimientos + Reportes + Documentación+2 mesesV2.0Performance + Auditorías + Mejora continua + Integraciones+2 meses
+
+❓ Preguntas para Definir Mejor el Alcance
+
+¿Multitenant? ¿Será una plataforma SaaS para múltiples empresas o instalación individual?
+¿Cantidad de usuarios? Esto define arquitectura y licenciamiento
+¿Integraciones existentes? ¿Hay ERP, RRHH, o sistemas legacy para conectar?
+¿Hosting? ¿Cloud, on-premise, híbrido?
+¿Idiomas? ¿Solo español o preparado para i18n?
+¿Primera vertical? ¿Empezamos con hotelería (Termas) o querés algo más genérico?
+¿White-label? ¿Posibilidad de revender con marca del cliente?
+
+
+¿Querés que profundice en algún módulo específico, que arme un documento formal de requerimientos, o que empecemos a diseñar el modelo de datos?ReintentarCG1-sera una plataforma saas para multiempresas
+2-dependera de la empresa y de la cantidad de usuarios que sea necesario que lo utilicen
+3-por ahora sin integracion
+4-cloud
+5-solo español por ahora pero preparado para i18n
+6-empecemos con hoteleria
+siento que la tecnologia es obsoleta que hay nuevas y mejores versiones frameworks, se tiene que ver fabuloso y llamativo en celular y genial en web y pcCatalogó stacks modernos y tendencias 2025 para SaaS hotelero impactante.18sClaudio quiere actualizar el stack tecnológico a algo más moderno y de vanguardia. Tiene razón en que hay opciones más nuevas. Déjame pensar en el stack más cutting-edge para 2025:
+Frontend:
+
+Next.js 15 (con React 19 y Server Components)
+O mejor aún: podríamos considerar alternativas más modernas como:
+
+Remix (ahora parte de Shopify, muy sólido)
+Nuxt 4 (si fuera Vue)
+SvelteKit 2 (muy performante)
+Solid Start (muy rápido)
+
+
+
+Para UI:
+
+Shadcn/UI sigue siendo muy actual
+Pero también hay:
+
+Park UI (basado en Ark UI)
+Radix Themes
+NextUI v2
+Magic UI (para animaciones)
+Aceternity UI (efectos espectaculares)
+
+
+
+Animaciones modernas:
+
+Framer Motion sigue siendo top
+GSAP para animaciones complejas
+Motion One (más ligero)
+Auto-animate
+
+State Management:
+
+Zustand sigue siendo genial
+Jotai (atomic)
+Nanostores
+TanStack Query v5
+
+Backend:
+
+FastAPI sigue siendo muy actual en Python
+Pero también:
+
+Hono (ultra rápido, edge-first)
+ElysiaJS (Bun runtime)
+Encore.go (Go con DevOps integrado)
+Rust con Axum o Actix
+
+
+
+Para SaaS multitenant moderno:
+
+Supabase (PostgreSQL + Auth + Realtime + Storage)
+Neon (PostgreSQL serverless)
+PlanetScale (MySQL serverless) - aunque tuvieron cambios recientes
+Turso (SQLite distribuido)
+Prisma ORM como herramienta de gestión de datos
+
+Explorando infraestructuras innovadoras, destacan plataformas como Vercel, Railway y Cloudflare Workers que ofrecen despliegues ágiles y escalables. Las tendencias emergentes apuntan hacia componentes de servidor, renderizado parcial y ejecución en edge, con Bun ganando terreno como runtime ultrarrápido. Tecnologías como Tauri y tRPC representan el futuro de las aplicaciones multiplataforma y las APIs tipadas.
+Safe, una biblioteca clave para validación de datos y esquemas, complementa perfectamente este stack de próxima generación, garantizando integridad y seguridad en el desarrollo de aplicaciones modernas.Stack Tecnológico de Vanguardia 2025
+Tenés toda la razón, Claudio. Vamos con lo más moderno y visualmente impactante. Acá va el stack actualizado:
+
+🚀 Stack Cutting-Edge 2025
+Frontend - Lo Más Nuevo
+┌─────────────────────────────────────────────────────────────────────┐
+│  FRONTEND STACK 2025                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ⚡ FRAMEWORK                                                       │
+│  ├── Next.js 15 (App Router + React 19)                            │
+│  ├── React Server Components + Server Actions                       │
+│  ├── Partial Prerendering (PPR)                                    │
+│  └── Turbopack (reemplazo de Webpack, 10x más rápido)              │
+│                                                                     │
+│  🎨 UI COMPONENTS (Visualmente Espectaculares)                      │
+│  ├── Shadcn/UI (base sólida y personalizable)                      │
+│  ├── Magic UI (componentes animados premium)                       │
+│  ├── Aceternity UI (efectos glassmorphism, gradientes)             │
+│  ├── Framer Motion (animaciones fluidas)                           │
+│  └── Tailwind CSS v4 (nuevo motor, más rápido)                     │
+│                                                                     │
+│  📱 MOBILE EXPERIENCE                                               │
+│  ├── PWA con next-pwa                                              │
+│  ├── Capacitor (apps nativas iOS/Android desde web)                │
+│  ├── Gestures con use-gesture                                      │
+│  └── Haptic feedback en móviles                                    │
+│                                                                     │
+│  🔄 DATA & STATE                                                    │
+│  ├── TanStack Query v5 (server state)                              │
+│  ├── Zustand v5 (client state, ultra ligero)                       │
+│  ├── Nuqs (URL state management)                                   │
+│  └── React Hook Form + Zod (formularios type-safe)                 │
+│                                                                     │
+│  📊 VISUALIZACIÓN                                                   │
+│  ├── Tremor v3 (dashboards modernos)                               │
+│  ├── Recharts (gráficos)                                           │
+│  ├── Nivo (visualizaciones avanzadas)                              │
+│  └── React Flow (diagramas interactivos para organigramas)         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+Backend - Arquitectura SaaS Moderna
+┌─────────────────────────────────────────────────────────────────────┐
+│  BACKEND STACK 2025                                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  🔥 OPCIÓN A: Full Supabase (Más rápido de implementar)            │
+│  ├── Supabase (PostgreSQL + Auth + Realtime + Storage)             │
+│  ├── Edge Functions (Deno runtime)                                 │
+│  ├── Row Level Security (multitenant nativo)                       │
+│  ├── Realtime subscriptions (notificaciones instantáneas)          │
+│  └── Supabase Storage (archivos multimedia)                        │
+│                                                                     │
+│  ⚡ OPCIÓN B: Custom con Hono + Drizzle (Máximo control)           │
+│  ├── Hono (framework ultra-rápido, edge-first)                     │
+│  ├── Drizzle ORM (type-safe, mejor que Prisma en 2025)            │
+│  ├── Neon PostgreSQL (serverless, scale to zero)                   │
+│  ├── Upstash Redis (serverless cache + queues)                     │
+│  ├── Cloudflare R2 (storage S3-compatible, sin egress fees)        │
+│  └── Resend (emails transaccionales modernos)                      │
+│                                                                     │
+│  🔐 AUTH & MULTITENANCY                                            │
+│  ├── Clerk (auth moderna, mejor UX que Auth0)                      │
+│  │   └── O Better Auth (open source, self-hosted)                  │
+│  ├── Organizaciones + Roles + Permisos granulares                  │
+│  └── Invitaciones por email con magic links                        │
+│                                                                     │
+│  📬 NOTIFICACIONES                                                  │
+│  ├── Novu (notification infrastructure as code)                    │
+│  ├── Push: Firebase Cloud Messaging                                │
+│  ├── Email: Resend + React Email                                   │
+│  └── SMS: Twilio (para críticos)                                   │
+│                                                                     │
+│  📁 FILE HANDLING                                                   │
+│  ├── UploadThing (uploads modernos para Next.js)                   │
+│  └── Sharp (procesamiento de imágenes edge)                        │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+Infraestructura Cloud
+┌─────────────────────────────────────────────────────────────────────┐
+│  INFRAESTRUCTURA 2025                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  🌐 HOSTING & DEPLOY                                                │
+│  ├── Vercel (óptimo para Next.js, edge network global)             │
+│  │   └── Preview deployments por PR                                │
+│  ├── Cloudflare (CDN + WAF + DDoS protection)                      │
+│  └── GitHub Actions (CI/CD)                                        │
+│                                                                     │
+│  🗄️ DATABASE                                                        │
+│  ├── Neon PostgreSQL (branching como Git para DB!)                 │
+│  │   └── Autoscaling + scale to zero                               │
+│  └── Drizzle Studio (GUI para la DB)                               │
+│                                                                     │
+│  📊 OBSERVABILIDAD                                                  │
+│  ├── Sentry (error tracking + performance)                         │
+│  ├── Axiom (logs serverless)                                       │
+│  ├── Vercel Analytics (Web Vitals)                                 │
+│  └── PostHog (product analytics, open source)                      │
+│                                                                     │
+│  💰 BILLING (para SaaS)                                            │
+│  ├── Stripe (pagos internacionales)                                │
+│  └── MercadoPago (pagos Argentina/LATAM)                           │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+🎨 UI/UX Espectacular - Design System
+Estética Visual 2025
+TENDENCIAS VISUALES QUE VAMOS A IMPLEMENTAR:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│  ✨ GLASSMORPHISM                                                   │
+│  └── Fondos translúcidos con blur, bordes sutiles                  │
+│                                                                     │
+│  🌈 GRADIENTES DINÁMICOS                                           │
+│  └── Mesh gradients animados, colores vibrantes                    │
+│                                                                     │
+│  🎭 MICRO-INTERACCIONES                                            │
+│  └── Hover effects, transiciones suaves, feedback táctil           │
+│                                                                     │
+│  🌓 DARK MODE PREMIUM                                              │
+│  └── No solo invertir colores, diseñar para dark                   │
+│                                                                     │
+│  📱 GESTOS NATIVOS                                                 │
+│  └── Swipe, pull-to-refresh, long-press en móvil                   │
+│                                                                     │
+│  🎬 ANIMACIONES SIGNIFICATIVAS                                     │
+│  └── Transiciones de página, loading states, celebrations          │
+│                                                                     │
+│  🔲 BENTO GRIDS                                                    │
+│  └── Layouts tipo Apple/Linear para dashboards                     │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+Paleta de Colores Premium (Hotelería)
+css/* 🎨 TEMA CLARO - Elegante y Profesional */
+:root {
+  /* Primario - Azul Profundo (Confianza, Profesionalismo) */
+  --primary-50:  #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-500: #6366f1;  /* Indigo vibrante */
+  --primary-600: #4f46e5;
+  --primary-900: #312e81;
+  
+  /* Acento - Dorado (Lujo, Premium) */
+  --accent-400: #fbbf24;
+  --accent-500: #f59e0b;
+  --accent-600: #d97706;
+  
+  /* Estados con gradientes */
+  --success: linear-gradient(135deg, #10b981, #059669);
+  --warning: linear-gradient(135deg, #f59e0b, #d97706);
+  --danger:  linear-gradient(135deg, #ef4444, #dc2626);
+  --info:    linear-gradient(135deg, #06b6d4, #0891b2);
+  
+  /* Superficies */
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  --surface-blur: blur(12px);
+  
+  /* Sombras suaves */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 25px 50px -12px rgba(0,0,0,0.15);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+}
+
+/* 🌙 TEMA OSCURO - Sofisticado */
+[data-theme="dark"] {
+  --surface-glass: rgba(15, 23, 42, 0.8);
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --border-subtle: rgba(148, 163, 184, 0.1);
+}
+Tipografía Moderna
+css/* Fuentes Variables para Performance */
+@font-face {
+  font-family: 'Geist';        /* La fuente de Vercel, ultra moderna */
+  font-family: 'Cal Sans';      /* Para headings impactantes */
+  font-family: 'JetBrains Mono'; /* Monospace para datos */
+}
+
+/* Escala tipográfica fluida */
+--text-xs:   clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+--text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+--text-4xl:  clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+
+📱 Mobile First - Experiencia Nativa
+Componentes Optimizados para Móvil
+typescript// Ejemplo: Bottom Sheet nativo para acciones
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="fab" className="fixed bottom-6 right-6">
+      <Plus className="h-6 w-6" />
+    </Button>
+  </SheetTrigger>
+  <SheetContent side="bottom" className="rounded-t-3xl">
+    <div className="mx-auto w-12 h-1.5 bg-muted rounded-full mb-6" />
+    <SheetHeader>
+      <SheetTitle>Nueva Tarea</SheetTitle>
+    </SheetHeader>
+    {/* Formulario optimizado para pulgar */}
+  </SheetContent>
+</Sheet>
+
+// Navegación inferior para móvil
+<nav className="fixed bottom-0 inset-x-0 bg-background/80 backdrop-blur-xl 
+                border-t safe-area-bottom md:hidden">
+  <div className="flex justify-around py-2">
+    <NavItem icon={Home} label="Inicio" />
+    <NavItem icon={CheckSquare} label="Tareas" />
+    <NavItem icon={BarChart3} label="Dashboard" />
+    <NavItem icon={User} label="Perfil" />
+  </div>
+</nav>
+Gestos y Animaciones
+typescript// Swipe para completar tarea
+<motion.div
+  drag="x"
+  dragConstraints={{ left: 0, right: 0 }}
+  onDragEnd={(_, info) => {
+    if (info.offset.x > 100) completarTarea();
+    if (info.offset.x < -100) eliminarTarea();
+  }}
+  className="relative"
+>
+  {/* Fondo verde al swipe derecha */}
+  <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r 
+                  from-green-500 to-green-600 rounded-xl flex items-center pl-4">
+    <Check className="text-white" />
+  </div>
+  
+  {/* Card de tarea */}
+  <TaskCard task={task} />
+</motion.div>
+```
+
+---
+
+## 🏨 Mockups Específicos para Hotelería
+
+### Dashboard Gerencial - Vista Desktop
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  🏨 Termas de Villa Elisa                           🔔 3  👤 Gerente        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  "Buen día, Carlos. Hoy tenés 5 vencimientos próximos y              ││
+│  │   el área de Gastronomía requiere atención urgente."                    ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                                                             │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       │
+│  │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │       │
+│  │     87%      │ │     142      │ │      5       │ │     23       │       │
+│  │  ▲ Score     │ │   Tareas     │ │   Alertas    │ │ Vencimientos │       │
+│  │   Global     │ │  Pendientes  │ │   🔴 Rojas   │ │   < 30 días  │       │
+│  │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │ │ ░░░░░░░░░░░░ │       │
+│  └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘       │
+│                                                                             │
+│  ┌─────────────────────────────────────┐ ┌─────────────────────────────────┐│
+│  │  📊 CUMPLIMIENTO POR ÁREA           │ │  📈 TENDENCIA ÚLTIMOS 6 MESES   ││
+│  │                                     │ │                                 ││
+│  │  Recepción      ████████████ 98%   │ │         ╱‾‾‾╲    ╱‾            ││
+│  │  Habitaciones   █████████░░░ 85%   │ │    ╱‾‾‾╱    ╲__╱               ││
+│  │  Spa & Termas   █████████░░░ 82%   │ │ __╱                            ││
+│  │  Gastronomía    ██████░░░░░░ 58% ⚠️│ │                                 ││
+│  │  Mantenimiento  ████████░░░░ 76%   │ │ Mar  Abr  May  Jun  Jul  Ago   ││
+│  │  Administración ██████████░░ 91%   │ │                                 ││
+│  └─────────────────────────────────────┘ └─────────────────────────────────┘│
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  🚨 REQUIEREN ATENCIÓN INMEDIATA                                        ││
+│  │                                                                         ││
+│  │  ┌─────────────────────────────────────────────────────────────────┐   ││
+│  │  │ 🔴 Matafuegos Sector Pileta    Vence: 15/12/2025  │ Ver │ Acción│   ││
+│  │  └─────────────────────────────────────────────────────────────────┘   ││
+│  │  ┌─────────────────────────────────────────────────────────────────┐   ││
+│  │  │ 🔴 Carnet Manipulador - Juan P. Vencido hace 5 días │ Ver │ Acc.│   ││
+│  │  └─────────────────────────────────────────────────────────────────┘   ││
+│  │  ┌─────────────────────────────────────────────────────────────────┐   ││
+│  │  │ 🟠 Control Bromatológico       Sin completar     │ Ver │ Acción│   ││
+│  │  └─────────────────────────────────────────────────────────────────┘   ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Vista Móvil - Jefe de Área
+```
+┌─────────────────────────────┐
+│ ≡  Gastronomía      🔔 2  👤│
+├─────────────────────────────┤
+│                             │
+│  Buenos días, María 👋      │
+│                             │
+│  ┌─────────────────────────┐│
+│  │   Tu score de área      ││
+│  │        58%              ││
+│  │     ████████░░░░░░      ││
+│  │   ⚠️ Requiere mejora    ││
+│  └─────────────────────────┘│
+│                             │
+│  📋 Tareas de Hoy    Ver → │
+│  ┌─────────────────────────┐│
+│  │ ○ Control temp. cámaras ││
+│  │   🕐 08:00 - Juan       ││
+│  ├─────────────────────────┤│
+│  │ ● Limpieza campana      ││  ← Swipe para completar
+│  │   ✓ Completada 07:45    ││
+│  ├─────────────────────────┤│
+│  │ ○ Recepción mercadería  ││
+│  │   🕐 10:00 - María      ││
+│  └─────────────────────────┘│
+│                             │
+│  ⚠️ Vencimientos           │
+│  ┌─────────────────────────┐│
+│  │ 🔴 Carnet Juan Pérez    ││
+│  │    Vencido hace 5 días  ││
+│  │    [ Gestionar ]        ││
+│  └─────────────────────────┘│
+│                             │
+│  📊 Evaluación Mensual     │
+│  ┌─────────────────────────┐│
+│  │ Próxima: 01/01/2026     ││
+│  │ Progreso: ████████░░ 75%││
+│  │ [ Continuar Checklist ] ││
+│  └─────────────────────────┘│
+│                             │
+├─────────────────────────────┤
+│  🏠    ✓    📊    👤       │
+│ Inicio Tareas Panel Perfil  │
+└─────────────────────────────┘
+
+        ┌─────────┐
+        │    +    │  ← FAB para nueva tarea
+        └─────────┘
+```
+
+### Checklist de Evaluación - Móvil
+```
+┌─────────────────────────────┐
+│ ←  Evaluación BPM Cocina    │
+├─────────────────────────────┤
+│                             │
+│  Progreso: ████████░░ 80%   │
+│  12 de 15 ítems completados │
+│                             │
+│  ─────────────────────────  │
+│  § Higiene Personal         │
+│  ─────────────────────────  │
+│                             │
+│  ┌─────────────────────────┐│
+│  │ ✅ Uniformes limpios    ││
+│  │    🟢 Conforme          ││
+│  │    📷 2 fotos adjuntas  ││
+│  └─────────────────────────┘│
+│                             │
+│  ┌─────────────────────────┐│
+│  │ ⬜ Lavado de manos      ││
+│  │                         ││
+│  │  ¿Cumple el protocolo?  ││
+│  │                         ││
+│  │  ┌─────┐ ┌─────┐ ┌────┐ ││
+│  │  │ 🟢  │ │ 🟡  │ │ 🔴 │ ││
+│  │  │ Sí  │ │Parc.│ │ No │ ││
+│  │  └─────┘ └─────┘ └────┘ ││
+│  │                         ││
+│  │  Observaciones:         ││
+│  │  ┌─────────────────────┐││
+│  │  │                     │││
+│  │  │                     │││
+│  │  └─────────────────────┘││
+│  │                         ││
+│  │  📷 Agregar evidencia   ││
+│  │  ┌─────┐ ┌─────┐       ││
+│  │  │ 📷  │ │ 📁  │       ││
+│  │  │Foto │ │Archivo│      ││
+│  │  └─────┘ └─────┘       ││
+│  └─────────────────────────┘│
+│                             │
+│  ┌─────────────────────────┐│
+│  │    [ Siguiente ítem → ] ││
+│  └─────────────────────────┘│
+│                             │
+└─────────────────────────────┘
+```
+
+---
+
+## 🏗️ Arquitectura SaaS Multitenant
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          ARQUITECTURA MULTITENANT                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                         FRONTEND (Vercel)                            │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐             │   │
+│  │  │ termas.  │  │ hotelx.  │  │ resort.  │  │  admin.  │             │   │
+│  │  │ qualyit  │  │ qualyit  │  │ qualyit  │  │ qualyit  │             │   │
+│  │  │ .app     │  │ .app     │  │ .app     │  │ .app     │             │   │
+│  │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘             │   │
+│  └───────┼─────────────┼─────────────┼─────────────┼───────────────────┘   │
+│          │             │             │             │                       │
+│          ▼             ▼             ▼             ▼                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                    API LAYER (Vercel Edge + Hono)                    │   │
+│  │                                                                      │   │
+│  │   ┌──────────────┐ ┌──────────────┐ ┌──────────────┐                │   │
+│  │   │  Auth Layer  │ │ Tenant       │ │  Rate        │                │   │
+│  │   │  (Clerk)     │ │ Resolver     │ │  Limiter     │                │   │
+│  │   └──────────────┘ └──────────────┘ └──────────────┘                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                    │                                       │
+│          ┌─────────────────────────┼─────────────────────────┐             │
+│          ▼                         ▼                         ▼             │
+│  ┌──────────────┐         ┌──────────────┐         ┌──────────────┐       │
+│  │    Neon      │         │   Upstash    │         │ Cloudflare   │       │
+│  │  PostgreSQL  │         │    Redis     │         │     R2       │       │
+│  │  (Database)  │         │   (Cache)    │         │  (Storage)   │       │
+│  └──────────────┘         └──────────────┘         └──────────────┘       │
+│                                                                             │
+│  AISLAMIENTO DE DATOS:                                                      │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Cada tenant tiene su propio tenant_id en todas las tablas          │   │
+│  │  Row Level Security (RLS) garantiza que nunca vean datos de otros   │   │
+│  │  Backups independientes por tenant                                   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+Modelo de Datos Simplificado
+sql-- Tenant (Empresa/Hotel)
+CREATE TABLE tenants (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,  -- termas-villa-elisa
+  subdomain TEXT UNIQUE,      -- termas.qualyitapp.com
+  plan TEXT DEFAULT 'free',   -- free, pro, enterprise
+  settings JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Usuarios con roles por tenant
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE tenant_users (
+  tenant_id UUID REFERENCES tenants(id),
+  user_id UUID REFERENCES users(id),
+  role TEXT NOT NULL,  -- admin, manager, supervisor, employee
+  area_id UUID REFERENCES areas(id),
+  PRIMARY KEY (tenant_id, user_id)
+);
+
+-- Áreas con jerarquía
+CREATE TABLE areas (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id UUID REFERENCES tenants(id),
+  parent_id UUID REFERENCES areas(id),
+  name TEXT NOT NULL,
+  code TEXT,
+  responsible_id UUID REFERENCES users(id),
+  settings JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Tareas
+CREATE TABLE tasks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id UUID REFERENCES tenants(id),
+  area_id UUID REFERENCES areas(id),
+  title TEXT NOT NULL,
+  description TEXT,
+  type TEXT NOT NULL,  -- scheduled, corrective, preventive, expiration
+  priority TEXT DEFAULT 'medium',
+  status TEXT DEFAULT 'pending',
+  due_date TIMESTAMPTZ,
+  recurrence JSONB,  -- cron expression + metadata
+  assigned_to UUID REFERENCES users(id),
+  created_by UUID REFERENCES users(id),
+  completed_at TIMESTAMPTZ,
+  completion_notes TEXT,
+  score INTEGER,  -- puntuación de resolución
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Row Level Security
+ALTER TABLE areas ENABLE ROW LEVEL SECURITY;
+CREATE POLICY areas_tenant_isolation ON areas
+  USING (tenant_id = current_setting('app.current_tenant')::uuid);
+```
+
+---
+
+## 📦 Estructura del Proyecto
+```
+qualyit-saas/
+├── apps/
+│   ├── web/                    # Next.js 15 App
+│   │   ├── app/
+│   │   │   ├── (auth)/         # Login, registro, invitaciones
+│   │   │   ├── (dashboard)/    # App principal
+│   │   │   │   ├── areas/
+│   │   │   │   ├── tasks/
+│   │   │   │   ├── evaluations/
+│   │   │   │   ├── reports/
+│   │   │   │   └── settings/
+│   │   │   └── api/            # API routes
+│   │   ├── components/
+│   │   │   ├── ui/             # Shadcn components
+│   │   │   ├── forms/
+│   │   │   ├── charts/
+│   │   │   └── layouts/
+│   │   └── lib/
+│   │       ├── db/             # Drizzle schema & queries
+│   │       ├── auth/           # Clerk config
+│   │       └── utils/
+│   │
+│   └── admin/                  # Panel de administración SaaS
+│
+├── packages/
+│   ├── ui/                     # Design system compartido
+│   ├── database/               # Schema Drizzle
+│   ├── emails/                 # Templates React Email
+│   └── config/                 # ESLint, TypeScript configs
+│
+├── turbo.json                  # Turborepo config
+└── package.json
+
+🚀 Plan de Implementación Revisado
+FaseEntregablesDuraciónTecnologías Clave0. SetupMonorepo, CI/CD, Design System base1 semanaTurborepo, Vercel, Shadcn1. MVP AuthRegistro, login, invitaciones, tenants2 semanasClerk, Neon, Drizzle2. CoreÁreas, usuarios, tareas básicas3 semanasNext.js 15, React 193. MobilePWA, offline, notificaciones push2 semanasCapacitor, FCM4. EvaluacionesChecklists, puntuación, evidencias3 semanasUploadThing, R25. DashboardGráficos, KPIs, alertas2 semanasTremor, Recharts6. ReportesPDF, Excel, carpeta auditoría2 semanasReact-PDF7. BillingPlanes, pagos, límites2 semanasStripe, MercadoPago8. PolishAnimaciones, performance, testing2 semanasFramer Motion
+Total estimado: 4-5 meses para V1.0 completa
+
+💡 Diferenciadores Competitivos
+CaracterísticaCompetenciaNuestra SoluciónUX MóvilApps básicasExperiencia nativa, gestos, offlineVelocidadLento, pesadoEdge computing, instantáneoPersonalizaciónRígidoPlantillas + editor visualPrecioUSD/mes altoModelo LATAM-friendlySoporteInglésEspañol nativo, zona horariaIntegracionesGenéricasEspecíficas Argentina (AFIP, etc.)
+
+¿Querés que arranquemos con algo específico? Podría:
+
+Diseñar el modelo de datos completo con todas las entidades
+Crear un prototipo interactivo en Figma o directamente en código
+Armar el setup inicial del monorepo con todo configurado
+Desarrollar el design system con los componentes base
+Documentar la API con OpenAPI/Swagger
+
+¿Por dónde preferís empezar?ReintentarCGno quiero que se haga demasiado engorroso lo de las normas de calidad, tiene que ser rapido y agil esta gente tiene otras cosas que realizarRedesigned UX para minimizar fricción y acelerar procesos operativos.Claudio tiene razón. El sistema tiene que ser práctico y rápido. La gente de un hotel no tiene tiempo para andar llenando formularios complejos. Necesitamos un enfoque más ágil, tipo "tap-tap-listo".
+Voy a replantear la UX para que sea:
+
+Ultra rápida - mínimos taps/clicks
+Inteligente - que sugiera, autocomplete, aprenda
+Sin fricción - nada de formularios largos
+Contextual - mostrar solo lo relevante en el momento
+
+Voy a rediseñar los flujos pensando en:
+
+Un supervisor de cocina que tiene 2 minutos entre servicios
+Una mucama que necesita marcar que terminó la habitación
+Un jefe de área que quiere ver el estado rápido
+
+La idea es que el checklist se pueda completar casi sin escribir nada, todo con taps, swipes, y fotos rápidas.Totalmente de acuerdo, Claudio. Un supervisor de cocina no puede estar 20 minutos llenando formularios. Tiene que ser tap-tap-listo.
+
+🎯 Filosofía: "3 Segundos o Menos"
+ANTES (Engorroso):                    DESPUÉS (Ágil):
+                                      
+Abrir app                             Abrir app
+Navegar a evaluaciones                Ver tarea del día
+Buscar checklist                      Swipe ✓ o ✗
+Abrir formulario                      Foto opcional
+Leer requisito largo                  Listo
+Seleccionar cumplimiento              
+Escribir observación                  
+Adjuntar evidencia                    
+Guardar                               
+Siguiente ítem...                     
+× 50 ítems
+
+📱 UX Rediseñada - Ultra Rápida
+Vista Diaria del Empleado
+┌─────────────────────────────┐
+│ 🏨 Hola María        8:45am │
+├─────────────────────────────┤
+│                             │
+│  Hoy tenés 6 cosas    ✓ 2/6 │
+│                             │
+│  ┌─────────────────────────┐│
+│  │ ✓ Temp. cámaras    07:30││  ← Ya hecho
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ✓ Limpieza mesadas 08:00││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ○ Control aceites  10:00││  ← Próximo
+│  │        [ Hacer → ]      ││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ○ Stock descartables    ││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ○ Limpieza campana      ││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ○ Cierre cocina    22:00││
+│  └─────────────────────────┘│
+│                             │
+├─────────────────────────────┤
+│  🏠    ✓    📷    👤       │
+└─────────────────────────────┘
+Completar Tarea - 3 Taps Máximo
+┌─────────────────────────────┐
+│ ←  Control aceites          │
+├─────────────────────────────┤
+│                             │
+│  ¿El aceite está en         │
+│   condiciones?              │
+│                             │
+│   ┌─────────────────────┐   │
+│   │                     │   │
+│   │     👍    👎       │   │
+│   │     SÍ     NO       │   │
+│   │                     │   │
+│   └─────────────────────┘   │
+│                             │
+│   ┌─────────────────────┐   │
+│   │  📷 Agregar foto    │   │  ← Opcional
+│   │     (opcional)      │   │
+│   └─────────────────────┘   │
+│                             │
+│   ┌─────────────────────┐   │
+│   │  💬 Nota rápida     │   │  ← Opcional
+│   │     (opcional)      │   │
+│   └─────────────────────┘   │
+│                             │
+│                             │
+│   ┌─────────────────────┐   │
+│   │    ✓ COMPLETAR      │   │
+│   └─────────────────────┘   │
+│                             │
+└─────────────────────────────┘
+Checklist Rápido - Swipe
+┌─────────────────────────────┐
+│ ←  Checklist Cocina   5/12  │
+├─────────────────────────────┤
+│                             │
+│  Deslizá → para OK          │
+│  Deslizá ← para NO          │
+│                             │
+│  ┌─────────────────────────┐│
+│  │→→→ Pisos limpios    ✓  ││  ← Swipe derecha = OK
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │→→→ Mesadas limpias  ✓  ││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │→→→ Basura retirada  ✓  ││
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │ ←← Campana limpia   ✗  ││  ← Swipe izq = NO
+│  │     📷 Foto requerida   ││     (pide evidencia)
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │    Uniforme completo    ││  ← Pendiente
+│  └─────────────────────────┘│
+│  ┌─────────────────────────┐│
+│  │    Temp. cámaras OK     ││
+│  └─────────────────────────┘│
+│                             │
+│  ════════════════════════   │
+│  Progreso: ████████░░░ 75%  │
+│                             │
+└─────────────────────────────┘
+Cuando Algo Está Mal - Flujo Simple
+┌─────────────────────────────┐
+│  ⚠️ Campana no limpia       │
+├─────────────────────────────┤
+│                             │
+│  📷 Sacá una foto           │
+│                             │
+│  ┌─────────────────────────┐│
+│  │                         ││
+│  │      [ 📷 CÁMARA ]      ││
+│  │                         ││
+│  └─────────────────────────┘│
+│                             │
+│  ¿Qué pasó? (elegí una)     │
+│                             │
+│  ┌───────────┐ ┌───────────┐│
+│  │ No hubo   │ │  Falta    ││
+│  │  tiempo   │ │ insumos   ││
+│  └───────────┘ └───────────┘│
+│  ┌───────────┐ ┌───────────┐│
+│  │  Equipo   │ │   Otro    ││
+│  │   roto    │ │           ││
+│  └───────────┘ └───────────┘│
+│                             │
+│  ┌─────────────────────────┐│
+│  │     ✓ REPORTAR          ││
+│  └─────────────────────────┘│
+│                             │
+│  → Se crea tarea correctiva │
+│    automáticamente          │
+│                             │
+└─────────────────────────────┘
+
+🧠 Inteligencia que Ahorra Tiempo
+Auto-completado Inteligente
+SITUACIÓN: Control de temperatura de cámaras
+
+ANTES (Manual):
+1. Abrir app
+2. Ir a tarea
+3. Escribir "Cámara 1: 4°C"
+4. Escribir "Cámara 2: 3°C"
+5. Escribir "Cámara 3: 5°C"
+6. Guardar
+
+DESPUÉS (Inteligente):
+1. Abrir app
+2. Escanear QR de la cámara (o NFC)
+3. App registra: "Cámara 1 verificada - 08:45"
+4. Siguiente...
+
+O MÁS SIMPLE AÚN:
+1. Abrir app
+2. "¿Todas las cámaras OK?" → [SÍ] [NO]
+3. Listo
+Plantillas Pre-armadas Simples
+PLANTILLA: "Apertura Cocina" (5 ítems, 30 segundos)
+
+□ Pisos limpios
+□ Mesadas desinfectadas  
+□ Cámaras temperatura OK
+□ Personal uniformado
+□ Insumos suficientes
+
+→ Todo OK = 1 tap en "Todo bien ✓"
+→ Algo mal = marca cuál y foto
+Recordatorios Contextuales
+┌─────────────────────────────┐
+│  📍 Detectamos que estás    │
+│     en la cocina            │
+│                             │
+│  ┌─────────────────────────┐│
+│  │ Checklist de apertura   ││
+│  │ pendiente               ││
+│  │                         ││
+│  │ [ Hacer ahora ]  [ × ]  ││
+│  └─────────────────────────┘│
+└─────────────────────────────┘
+
+🏷️ Simplificación de "Normas de Calidad"
+Enfoque Original vs Nuevo
+ANTES (Burocrático):
+┌─────────────────────────────────────────────────┐
+│ ISO 9001:2015 - Requisito 8.5.1                 │
+│ Control de producción y prestación del servicio │
+│ La organización debe implementar la producción  │
+│ y prestación del servicio bajo condiciones      │
+│ controladas...                                  │
+│ [Leer más...]                                   │
+│                                                 │
+│ Evidencia requerida: [ Seleccionar... ▼ ]      │
+│ Nivel de cumplimiento: [ Seleccionar... ▼ ]    │
+│ Observaciones: _________________________        │
+└─────────────────────────────────────────────────┘
+
+DESPUÉS (Humano):
+┌─────────────────────────────────────────────────┐
+│  🍳 Cocina                                      │
+│                                                 │
+│  ¿La comida se prepara de forma segura?        │
+│                                                 │
+│       👍 Sí        👎 No                        │
+│                                                 │
+└─────────────────────────────────────────────────┘
+
+(El sistema mapea internamente al requisito ISO,
+ pero el usuario no necesita saberlo)
+Mapeo Invisible
+LO QUE VE EL USUARIO          LO QUE GUARDA EL SISTEMA
+─────────────────────         ────────────────────────
+"¿Pisos limpios?"        →    Req. BPM 4.2.1 Higiene
+"¿Uniforme completo?"    →    Req. BPM 4.3.2 Personal
+"¿Cámaras frías OK?"     →    Req. HACCP PCC-001
+
+Cuando llegue la auditoría, el sistema genera:
+✓ Evidencia de cumplimiento BPM 4.2.1
+✓ 365 registros de verificación
+✓ 12 no conformidades detectadas y corregidas
+✓ Trazabilidad completa
+
+📊 Dashboard Simplificado para Jefes
+Vista Rápida (10 segundos)
+┌─────────────────────────────┐
+│ 🍳 Cocina          Hoy      │
+├─────────────────────────────┤
+│                             │
+│        🟢 92%               │
+│      Todo bien              │
+│                             │
+│  ┌─────────────────────────┐│
+│  │ ✓ 18 tareas hechas      ││
+│  │ ○  2 pendientes         ││
+│  │ ⚠️  1 problema          ││
+│  └─────────────────────────┘│
+│                             │
+│  Problema:                  │
+│  ┌─────────────────────────┐│
+│  │ 🔴 Campana extractora   ││
+│  │    Juan la reportó      ││
+│  │    hace 2 horas         ││
+│  │    [ Ver ]  [ Asignar ] ││
+│  └─────────────────────────┘│
+│                             │
+│  Vencimientos próximos:     │
+│  • Carnet Juan (5 días)     │
+│  • Fumigación (12 días)     │
+│                             │
+└─────────────────────────────┘
+Gerencia - Todo en Un Vistazo
+┌─────────────────────────────────────────────────────────────────┐
+│  🏨 Villa Elisa                                    Dic 2025     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐   │
+│   │    95%    │  │    87%    │  │    72%    │  │    91%    │   │
+│   │  Recep.   │  │  Habit.   │  │  Cocina   │  │   Mant.   │   │
+│   │    🟢     │  │    🟢     │  │    🟡     │  │    🟢     │   │
+│   └───────────┘  └───────────┘  └───────────┘  └───────────┘   │
+│                                                                 │
+│   🔴 1 alerta: Cocina bajo el objetivo (80%)                   │
+│                                                                 │
+│   📅 Esta semana:                                               │
+│   • Vence seguro automotor (Vie)                               │
+│   • Auditoría bromatología (próx. Lun)                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+⚡ Funcionalidades "Cero Fricción"
+AcciónCómo se haceCompletar tarea1 tap (o swipe)Reportar problemaFoto + 1 tap en motivoVer mi díaAbrir app (es la home)Agregar notaVoz a textoEscanear equipoQR/NFC automáticoVer historialScroll infinitoBuscar algoBúsqueda por voz
+Atajos Inteligentes
+┌─────────────────────────────┐
+│  Acciones rápidas           │
+├─────────────────────────────┤
+│                             │
+│  ┌─────────┐  ┌─────────┐   │
+│  │   ✓     │  │   📷    │   │
+│  │ Todo OK │  │ Reportar│   │
+│  │  hoy    │  │ problema│   │
+│  └─────────┘  └─────────┘   │
+│                             │
+│  ┌─────────┐  ┌─────────┐   │
+│  │   📋    │  │   🔍    │   │
+│  │Checklist│  │ Buscar  │   │
+│  │ rápido  │  │         │   │
+│  └─────────┘  └─────────┘   │
+│                             │
+└─────────────────────────────┘
+
+🎯 Reglas de Diseño
+1. MÁXIMO 3 TAPS para cualquier acción común
+2. CERO texto obligatorio (todo con opciones)
+3. FOTOS en 1 tap (cámara integrada)
+4. VOZ para notas (transcripción automática)
+5. OFFLINE primero (sincroniza después)
+6. NOTIFICACIONES solo las críticas
+7. LENGUAJE humano (no técnico)
+
+📱 Comparativa de Tiempos
+TareaSistema tradicionalNuestro sistemaChecklist apertura (10 ítems)5-8 min30 segReportar problema3-5 min15 segVer estado del área2-3 min3 segRegistrar temperatura1-2 min5 segCompletar evaluación mensual2-4 horas20-30 min
+
+🔄 Flujo Típico de un Día
+07:00 - Juan (cocina) abre app
+        → Ve "Apertura cocina" como primera tarea
+        → Tap "Todo OK" (5 ítems verificados en 1 tap)
+        → 10 segundos total
+
+10:30 - Notificación: "Control de aceites pendiente"
+        → Tap en notificación
+        → Tap "OK" 
+        → 5 segundos
+
+12:00 - Encuentra problema en campana
+        → Tap "Reportar" 
+        → Foto
+        → Tap "Equipo necesita reparación"
+        → 20 segundos
+        → Automáticamente se crea tarea para mantenimiento
+
+14:00 - María (jefa) ve alerta
+        → Dashboard muestra 🟡 en cocina
+        → Tap para ver detalle
+        → Asigna a técnico con 1 tap
+        → 30 segundos
+
+18:00 - Técnico resuelve
+        → Foto del arreglo
+        → Tap "Resuelto"
+        → 15 segundos
+
+22:00 - Juan hace "Cierre cocina"
+        → Swipe, swipe, swipe (5 ítems)
+        → 20 segundos
+
+FIN DEL DÍA:
+- 20 verificaciones completadas
+- 1 problema detectado y resuelto
+- Tiempo total invertido: ~3 minutos
+- Todo documentado para auditoría ✓
+
+¿Te parece este enfoque? La idea es que el sistema trabaje para ellos, no al revés.
+

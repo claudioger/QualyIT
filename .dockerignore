@@ -1,0 +1,48 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+**/.next
+out
+dist
+build
+coverage
+
+# Development
+.env
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Testing
+playwright-report
+test-results
+coverage
+
+# Docs/Specs (not needed in production)
+specs
+*.md
+!README.md
+
+# Misc
+.turbo
+lighthouse-report.json
+parse-lighthouse.js
